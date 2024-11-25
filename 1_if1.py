@@ -22,13 +22,13 @@ def main():
 def get_age(age):
     if age > 65:
         return "Вам пора на пенсию"
-    elif age > 21 and age <= 65:
+    elif 21 < age <= 65:
         return "Вам пора на работу"
-    elif age > 16 and age <= 21:
+    elif 16 < age <= 21:
         return "Вы студент ВУЗа, пора на лекции"
-    elif age > 6 and age <= 16:
+    elif 6 < age <= 16:
         return "Школа даст Вам базовые знания"
-    elif age >= 1 and age <= 6:
+    elif 1 <= age <= 6:
         return "А в саду сегодня манная каша с комочками"
     else:
         return "Возраст не определен"
