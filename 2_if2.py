@@ -22,23 +22,26 @@ def main():
     В ней надо заменить pass на ваш код
     """
 
-
 def compare_str(str1,str2):
-    if str1.isalpha()  and str2.isalpha():
+    if not isinstance(str1, str) or not isinstance(str2, str):
+        return 0
+
+    if str2 != 'learn':
         if str1 == str2:
-            return "1 - строки одинаковые"
-        elif str1 != str2 and str2.lower() =='learn':
-            return "3 - строки разные и вторая равна 'learn' "
+            return 1
         elif len(str1) > len(str2):
-            return "2 - Строки разные и первая длиннее"
-        else:
-            return "Условия для сравнения строк не определены"
+            return 2
     else:
-        return "0 - одна или обе строки является числом"
+        return 3
 
-str1 = input("Введите первую строку ")
-str2 = input("Введите вторую строку ")
+print(compare_str("Строка", "Строка"))
+print(compare_str("hello", "world"))
+print(compare_str("Python", "learn"))
+print(compare_str("learn", "Python"))
+print(compare_str("Длинная строка", "Просто строка"))
+print(compare_str("просто строка", "Длинная строка"))
+print(compare_str("Проверка", 20983))
+print(compare_str(20983, "Проверка"))
 
-print (compare_str(str1,str2))
 if __name__ == "__main__":
     main()
