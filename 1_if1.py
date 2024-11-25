@@ -35,7 +35,7 @@ def get_age(age):
 
 input_age = int(input("Введите Ваш возраст: "))
 result = get_age(input_age)
-print (result)
+print(result)
 
 if __name__ == "__main__":
     main()
