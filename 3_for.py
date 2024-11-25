@@ -29,22 +29,22 @@ sales = [
 
 #Функция расчета суммарной продажи каждого товара
 def count_sold(product_sales):
-    product_sum = 0
+    one_product_total_sold = 0
     for sold in product_sales:
-        product_sum += sold
-    return product_sum
+        one_product_total_sold += sold
+    return one_product_total_sold
 
 #Посчитать и вывести суммарное количество продаж для каждого товара
 for product_sales in sales:
-    sold_sum = count_sold(product_sales['items_sold'])
-    print (f'Общее количество проданных {product_sales["product"]} - {sold_sum}')
+    product_total_sold = count_sold(product_sales['items_sold'])
+    print (f'Общее количество проданных {product_sales["product"]} - {product_total_sold}')
 
 
 #Посчитать и вывести среднее количество продаж для каждого товара
 for product_sales in sales:
-    sold_sum = count_sold(product_sales['items_sold'])
-    sold_avg = round(sold_sum / len(product_sales['items_sold']),2)
-    print (f'Среднее количество продаж {product_sales["product"]} - {sold_avg}')
+    product_total_sold = count_sold(product_sales['items_sold'])
+    product_sold_avg = round(product_total_sold / len(product_sales['items_sold']),2)
+    print (f'Среднее количество продаж {product_sales["product"]} - {product_sold_avg}')
 
 
 #Посчитать и вывести суммарное количество продаж всех товаров
@@ -54,7 +54,7 @@ for one_sales in sales:
 print (f'Суммарное количество проданных товаров - {sold_count}')
 
 #Посчитать и вывести среднее количество продаж всех товаров
-print (f'Среднее количество проданных товаров - {sold_count/len(salesr)}')
+print (f'Среднее количество проданных товаров - {sold_count/len(sales)}')
 
 if __name__ == "__main__":
     main()

@@ -13,7 +13,7 @@
 def hello_user():
     while True:
         user_input = input ("Как дела? ")
-        if user_input == 'Хорошо':
+        if user_input.strip().lower() == 'хорошо':
             print ('Рад за тебя!')
             break
 
