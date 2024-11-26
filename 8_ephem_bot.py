@@ -13,8 +13,10 @@
 
 """
 import logging
-
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram import Update
+import ephem
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, filters
+import requests
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -43,11 +45,12 @@ def talk_to_me(update, context):
 
 
 def main():
-    mybot = Updater("КЛЮЧ, КОТОРЫЙ НАМ ВЫДАЛ BotFather", request_kwargs=PROXY, use_context=True)
+    mybot = Updater("7641525369:AAEyqrXNqCUEfF4CKVNfU_gjt5_0SGLJisw",  request_kwargs=PROXY)
+
 
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", greet_user))
-    dp.add_handler(MessageHandler(Filters.text, talk_to_me))
+    dp.add_handler(MessageHandler(filters.text, talk_to_me))
 
     mybot.start_polling()
     mybot.idle()
