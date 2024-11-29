@@ -1,60 +1,78 @@
-"""
-Домашнее задание №1
-
-Использование библиотек: ephem
-
-* Установите модуль ephem
-* Добавьте в бота команду /planet, которая будет принимать на вход
-  название планеты на английском, например /planet Mars
-* В функции-обработчике команды из update.message.text получите
-  название планеты (подсказка: используйте .split())
-* При помощи условного оператора if и ephem.constellation научите
-  бота отвечать, в каком созвездии сегодня находится планета.
-
-"""
 import logging
-from telegram import Update
 import ephem
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, filters
-import requests
+import settings
+from flask import Flask, request, jsonify
+from telegram import Update
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
-logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO,
-                    filename='bot.log')
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+# Создание Flask-приложения
+app = Flask(__name__)
 
-PROXY = {
-    'proxy_url': 'socks5://t1.learn.python.ru:1080',
-    'urllib3_proxy_kwargs': {
-        'username': 'learn',
-        'password': 'python'
-    }
-}
+# Токен вашего бота
+TELEGRAM_BOT_TOKEN = settings.token
 
-
-def greet_user(update, context):
-    text = 'Вызван /start'
-    print(text)
-    update.message.reply_text(text)
+# приложение для Telegram
+application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
 
-def talk_to_me(update, context):
-    user_text = update.message.text
-    print(user_text)
-    update.message.reply_text(text)
+async def start(update, context):
+    await update.message.reply_text("Привет! Используйте /planet <название>, чтобы узнать о планете.")
 
 
-def main():
-    mybot = Updater("7641525369:AAEyqrXNqCUEfF4CKVNfU_gjt5_0SGLJisw",  request_kwargs=PROXY)
+async def planet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if len(context.args) == 0:
+        await update.message.reply_text("Пожалуйста, укажите название планеты, например: /planet Mars")
+        return
+
+    planet_name = context.args[0].capitalize()  # Получаем название планеты
+    observer = ephem.Observer()
+
+    # Выбор планеты
+    if planet_name == "Mercury":
+        planet = ephem.Mercury(observer)
+    elif planet_name == "Venus":
+        planet = ephem.Venus(observer)
+    elif planet_name == "Earth":
+        planet = ephem.Earth(observer)
+    elif planet_name == "Mars":
+        planet = ephem.Mars(observer)
+    elif planet_name == "Jupiter":
+        planet = ephem.Jupiter(observer)
+    elif planet_name == "Saturn":
+        planet = ephem.Saturn(observer)
+    elif planet_name == "Uranus":
+        planet = ephem.Uranus(observer)
+    elif planet_name == "Neptune":
+        planet = ephem.Neptune(observer)
+    else:
+        await update.message.reply_text(
+            "Неизвестная планета. Пожалуйста, укажите одну из следующих: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune.")
+        return
+
+    planet.compute(observer)
+    constellation = ephem.constellation(planet)
+
+    message = f"{planet_name} находится в созвездии: {constellation[1]}"
+    await update.message.reply_text(message)
 
 
-    dp = mybot.dispatcher
-    dp.add_handler(CommandHandler("start", greet_user))
-    dp.add_handler(MessageHandler(filters.text, talk_to_me))
-
-    mybot.start_polling()
-    mybot.idle()
+application.add_handler(CommandHandler("start", start))
+application.add_handler(CommandHandler("planet", planet))
+application.start()
 
 
-if __name__ == "__main__":
-    main()
+# Обработка входящих обновлений
+@app.route('/mytgbot', methods=["GET", "POST"])
+async def webhook():
+    update = request.get_json()
+    update_m = Update.de_json(update, application.bot)
+    if not application.running:
+        await application.initialize()
+    await application.process_update(update_m)
+
+    return 'ok', 200
+
